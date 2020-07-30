@@ -1,5 +1,5 @@
 import * as types from './mutation-types'
 
-export const setFoo = ({ commit }, payload) => {
-  commit(types.UPDATE_FOO, payload)
-}
+// export const setPopupVisibility = ({ commit }, payload) => {
+//   commit(types.SET_POPUP_VISIBILITY, payload)
+// }

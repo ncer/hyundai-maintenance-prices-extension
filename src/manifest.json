@@ -8,12 +8,22 @@
     "128": "icons/icon_128.png"
   },
   "browser_action": {
-    "default_title": "hyundai-maintenance-prices-extension",
-    "default_popup": "popup/popup.html"
+    "default_title": "Hyundai Maintenance Prices Extensio",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "48": "icons/icon_48.png",
+      "128": "icons/icon_128.png"
+    }
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
-  }
+    "scripts": ["background.js"]
+  },
+  "permissions": ["tabs", "activeTab", "declarativeContent", "storage", "webNavigation", "<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["http://hyundai.ru/*", "https://hyundai.ru/*", "http://www.hyundai.ru/*", "https://www.hyundai.ru/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"]
+    }
+  ]
 }

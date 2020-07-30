@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexWebExtensions from 'vuex-webextensions'
 
 import * as getters from './getters'
 import mutations from './mutations'
@@ -9,9 +10,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    foo: 'bar',
+    isPopupVisible: false,
   },
   getters,
   mutations,
   actions,
+  plugins: [VuexWebExtensions()],
 })
