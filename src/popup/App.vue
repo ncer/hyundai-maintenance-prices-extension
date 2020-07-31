@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Link href="https://www.hyundai.ru/" type="primary">На сайт Hyundai</Link>
+    <Link href="https://www.hyundai.ru/" target="_blank" type="primary">На сайт Hyundai</Link>
     <br /><br />
     <Button type="primary" @click="onClick">{{ buttonText }}</Button>
   </div>
