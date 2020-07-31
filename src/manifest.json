@@ -18,9 +18,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://hyundai.ru/*", "https://hyundai.ru/*", "http://www.hyundai.ru/*", "https://www.hyundai.ru/*"],
+      "matches": ["*://*.hyundai.ru/*"],
       "js": ["content/content.js"],
       "css": ["content/content.css"]
     }
-  ]
+  ],
+  "permissions": ["storage"]
 }
