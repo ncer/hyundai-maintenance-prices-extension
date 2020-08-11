@@ -1,13 +1,13 @@
 {
-  "name": "hyundai-maintenance-prices-extension",
-  "description": "Hyundai Maintenance Prices Extension",
+  "name": "Hyundai Maintenance Prices Extension",
+  "description": "An extension that helps you compare prices for maintenance at all official Hyundai dealers in Russia.",
   "version": null,
   "manifest_version": 2,
   "icons": {
     "128": "icons/icon_128.png"
   },
   "browser_action": {
-    "default_title": "Hyundai Maintenance Prices Extensio",
+    "default_title": "Hyundai Maintenance Prices Extension",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "128": "icons/icon_128.png"
