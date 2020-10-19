@@ -1,3 +1,9 @@
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ncer/hyundai-maintenance-prices-extension)
+![GitHub](https://img.shields.io/github/license/ncer/hyundai-maintenance-prices-extension) 
+[![ViewCount](https://views.whatilearened.today/views/github/ncer/ncer.svg?cache=remove)](#) 
+
+
+
 # Hyundai Maintenance Prices Extension
 
 Расширение для Google Chrome, которое помогает сравнить цены на ТО у всех официальных дилеров Hyundai в России.
