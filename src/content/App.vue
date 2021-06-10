@@ -3,11 +3,13 @@
     id="hmpe-dialog"
     class="hmpe-dialog"
     title="Сравнительная таблица цен на ТО"
-    :visible="isPopupVisible"
+    :visible="isDialogVisible"
     width="90%"
     @close="onPopupClick"
   >
-    <Form :inline="true" label-position="right" label-width="auto">
+    <pre v-if="error" v-html="error" />
+
+    <Form v-else :inline="true" label-position="right" label-width="auto">
       <FormItem label="Модель">
         <Select v-model="models.car" placeholder="Модель" @change="updateCarList">
           <Option v-for="car in carList" :key="car.code" :label="car.name" :value="car.code" />
@@ -48,54 +50,65 @@
       </FormItem>
     </Form>
 
-    <Table v-if="table.length" :data="table" stripe style="width: 100% ">
-      <TableColumn prop="name" label="Дилер" fixed sortable />
-      <TableColumn prop="prices.originspares_nf" label="Стоимость оригинальных зап.частей" sortable />
-      <TableColumn prop="prices.repairs_nf" label="Стоимость работ" sortable />
-      <TableColumn prop="prices.total_nf" label="Итого" sortable />
-      <TableColumn label="Контакты" width="400">
-        <template slot-scope="scope">
-          <div>
-            <i class="el-icon-location" />
-            <span>{{ scope.row.address }}</span>
-          </div>
-          <div>
-            <i class="el-icon-phone" />
-            <Link type="primary" :href="`tel:${scope.row.phone}`">{{ scope.row.phone }}</Link>
-          </div>
-          <div>
-            <i class="el-icon-link" />
-            <Link type="primary" :href="scope.row.site" target="_blank">{{ scope.row.site }}</Link>
-          </div>
-        </template>
-      </TableColumn>
-    </Table>
+    <transition name="fade">
+      <Table v-if="table.length" :data="table" stripe style="width: 100%">
+        <TableColumn prop="name" label="Дилер" fixed sortable />
+        <TableColumn prop="prices.originspares_nf" label="Стоимость оригинальных зап.частей" sortable />
+        <TableColumn prop="prices.repairs_nf" label="Стоимость работ" sortable />
+        <TableColumn prop="prices.total_nf" label="Итого" sortable />
+        <TableColumn label="Контакты" width="400">
+          <template slot-scope="scope">
+            <div>
+              <i class="el-icon-location" />
+              <span>&nbsp;{{ scope.row.address }}&nbsp;</span>
+              <Link
+                target="_blank"
+                icon="el-icon-top-right"
+                title="Открыть карту"
+                :href="`//yandex.ru/maps/?ll=${scope.row.longitude},${scope.row.latitude}&text=${encodeURIComponent(
+                  scope.row.name + ' ' + scope.row.address
+                )}&z=12`"
+              />
+            </div>
+
+            <div>
+              <i class="el-icon-phone" />&nbsp;
+              <Link type="primary" :href="`tel:${scope.row.phone}`">{{ scope.row.phone }}</Link>
+            </div>
+
+            <div>
+              <i class="el-icon-link" />&nbsp;
+              <Link type="primary" :href="scope.row.site" target="_blank">{{ scope.row.site }}</Link>
+            </div>
+          </template>
+        </TableColumn>
+      </Table>
+    </transition>
   </Dialog>
 </template>
 
 <script>
 import axios from 'axios'
 import { mapState, mapMutations } from 'vuex'
-import { Icon, Link, Button, Dialog, Form, FormItem, Select, Option, Table, TableColumn, Loading } from 'element-ui'
+import { Button, Dialog, Form, FormItem, Link, Loading, Option, Select, Table, TableColumn } from 'element-ui'
 
 export default {
-  name: 'HMPEContentApp',
+  name: 'ContentApp',
 
   components: {
-    Icon,
-    Link,
     Button,
     Dialog,
     Form,
     FormItem,
-    Select,
+    Link,
     Option,
+    Select,
     Table,
     TableColumn,
-    Loading,
   },
 
   data: () => ({
+    error: '',
     loader: null,
     table: [],
     carList: [],
@@ -118,7 +131,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['isPopupVisible']),
+    ...mapState(['isDialogVisible']),
   },
 
   async mounted() {
@@ -127,30 +140,35 @@ export default {
     Promise.all([
       await axios.get('https://www.hyundai.ru/ajax/new/getServiceJSON'),
       await axios.get('https://www.hyundai.ru/requestapi/getDealers?notest=1'),
-    ]).then(values => {
-      this.carList = values[0].data
-      this.dealerList = values[1].data
-      this.updateLists()
-      this.showLoader(false)
-    })
+    ])
+      .then(([cars, dealers]) => {
+        this.carList = cars.data
+        this.dealerList = dealers.data
+
+        this.updateLists()
+      })
+      .catch((e) => {
+        this.logError(`Fetch car / dealer lists error.\nDetails: ${e}`)
+      })
+      .finally(() => this.showLoader(false))
   },
 
   methods: {
-    ...mapMutations(['SET_POPUP_VISIBILITY']),
+    ...mapMutations(['SET_DIALOG_VISIBILITY']),
 
     onPopupClick() {
-      this.SET_POPUP_VISIBILITY(false)
+      this.SET_DIALOG_VISIBILITY(false)
     },
 
-    createTableData() {
+    async createTableData() {
       this.showLoader(true)
 
       const params = Object.entries(this.models)
-        .map(entry => {
-          if (entry[0] !== 'city') {
-            entry.splice(0, 1, entry[0].toLowerCase())
-            entry.splice(1, 1, encodeURIComponent(entry[1]))
-            return entry.join('=')
+        .map(([key, value]) => {
+          if (key !== 'city') {
+            key = key.toLowerCase()
+            value = encodeURIComponent(value)
+            return [key, value].join('=')
           }
         })
         .join('&')
@@ -159,24 +177,33 @@ export default {
 
       const dealers = currentCity?.dealers
 
-      const requests = dealers.map(item => {
-        return axios.get(`https://www.hyundai.ru/ajax/new/calculator?${params}&dealer=${item.code}&spares=0`)
-      })
+      const requests = []
 
-      Promise.all(requests).then(values => {
-        this.table = dealers.map((dealer, i) => {
-          let { originspares_nf, repairs_nf, total_nf } = values[i].data
-          dealer.prices = {
-            ...values[i].data,
-            originspares_nf: originspares_nf ? originspares_nf : '0',
-            repairs_nf: repairs_nf ? repairs_nf : '0',
-            total_nf: total_nf ? total_nf : '0',
-          }
-          return dealer
+      for (const item of dealers) {
+        requests.push(
+          await axios.get(`https://www.hyundai.ru/ajax/new/calculator?${params}&dealer=${item.code}&spares=0`)
+        )
+      }
+
+      await Promise.all(requests)
+        .then((values) => {
+          this.table = dealers.map((dealer, i) => {
+            const { originspares_nf, repairs_nf, total_nf } = values[i].data
+            dealer.prices = {
+              ...values[i].data,
+              originspares_nf: originspares_nf || '0',
+              repairs_nf: repairs_nf || '0',
+              total_nf: total_nf || '0',
+            }
+            return dealer
+          })
+
+          this.showLoader(false)
         })
-
-        this.showLoader(false)
-      })
+        .catch((e) => {
+          this.logError(`Fetch dealers data error.\nDetails: ${e}`)
+        })
+        .finally(() => this.showLoader(false))
     },
 
     updateCarList() {
@@ -207,11 +234,11 @@ export default {
     getCityList() {
       return this.dealerList
         .reduce((list, dealer) => {
-          if (!list.find(item => +item.id === +dealer.city_id)) {
+          if (!list.find((item) => +item.id === +dealer.city_id)) {
             list.push({
               id: dealer.city_id,
               name: dealer.city_name,
-              dealers: this.dealerList.filter(item => +item.city_id === +dealer.city_id),
+              dealers: this.dealerList.filter((item) => +item.city_id === +dealer.city_id),
             })
           }
           return list
@@ -227,11 +254,11 @@ export default {
     },
 
     getCurrentCity() {
-      return this.lists.city.find(item => item.name === this.models.city)
+      return this.lists.city.find((item) => item.name === this.models.city)
     },
 
     getCar() {
-      return this.carList.find(item => item.code === this.models.car)
+      return this.carList.find((item) => item.code === this.models.car)
     },
 
     showLoader(isShown) {
@@ -246,6 +273,11 @@ export default {
           this.loader = null
         })
       }
+    },
+
+    logError(message) {
+      this.error = message
+      console.error(`[${browser.i18n.getMessage('extShortName')}]: ${message}`)
     },
   },
 }
@@ -263,8 +295,5 @@ $--font-path: 'https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/theme-chalk/fo
   font-weight: normal;
   font-display: $--font-display;
   font-style: normal;
-}
-
-.hmpe-dialog {
 }
 </style>

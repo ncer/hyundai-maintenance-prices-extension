@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Hyundai Maintenance Prices Extension",
+    "description": "Extension name"
+  },
+  "extShortName": {
+    "message": "HMPE",
+    "description": "Short extension name"
+  },
+  "extDescription": {
+    "message": "An extension that helps you compare prices for maintenance at all official Hyundai dealers in Russia.",
+    "description": "Extension description"
+  }
+}
