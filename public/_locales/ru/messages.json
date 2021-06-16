@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Hyundai Maintenance Prices Extension",
+    "description": "Название расширения"
+  },
+  "extShortName": {
+    "message": "HMPE",
+    "description": "Короткое название расширения"
+  },
+  "extDescription": {
+    "message": "Расширение для Google Chrome, которое помогает сравнить цены на ТО у всех официальных дилеров Hyundai в России.",
+    "description": "Описание расширения"
+  }
+}

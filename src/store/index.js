@@ -2,18 +2,16 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexWebExtensions from 'vuex-webextensions'
 
-import * as getters from './getters'
-import mutations from './mutations'
-import * as actions from './actions'
-
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    isPopupVisible: false,
+    isDialogVisible: false,
   },
-  getters,
-  mutations,
-  actions,
+  mutations: {
+    SET_DIALOG_VISIBILITY(state, payload) {
+      state.isDialogVisible = payload
+    },
+  },
   plugins: [VuexWebExtensions()],
 })

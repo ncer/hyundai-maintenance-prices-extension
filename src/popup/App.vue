@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <Link href="https://www.hyundai.ru/" target="_blank" type="primary">На сайт Hyundai</Link>
-    <br /><br />
+  <div class="popup">
+    <Logo />
+    <Link href="https://www.hyundai.ru/service/maintenance#app" target="_blank" type="primary">
+      На сайт Hyundai
+      <i class="el-icon-top-right el-icon--right" />
+    </Link>
+    <br />
     <Button type="primary" @click="onClick">{{ buttonText }}</Button>
   </div>
 </template>
@@ -9,37 +13,54 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import { Link, Button } from 'element-ui'
+import Logo from '@/components/Logo.vue'
 
 export default {
-  name: 'HMPEPopupApp',
-
-  data() {
-    return {}
-  },
+  name: 'PopupApp',
 
   components: {
-    Link,
     Button,
+    Link,
+    Logo,
   },
 
   computed: {
-    ...mapState(['isPopupVisible']),
+    ...mapState(['isDialogVisible']),
 
     buttonText() {
-      return this.isPopupVisible ? 'Закрыть форму' : 'Открыть форму'
+      return this.isDialogVisible ? 'Закрыть форму' : 'Открыть форму'
     },
   },
 
-  mounted() {},
-
   methods: {
-    ...mapMutations(['SET_POPUP_VISIBILITY']),
+    ...mapMutations(['SET_DIALOG_VISIBILITY']),
 
     onClick() {
-      this.SET_POPUP_VISIBILITY((this.isPopupVisible = !this.isPopupVisible))
+      if (this.isDialogVisible) {
+        this.SET_DIALOG_VISIBILITY(false)
+      } else {
+        this.SET_DIALOG_VISIBILITY(true)
+      }
     },
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  padding: 16px;
+}
+</style>
+
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: 0;
+}
+</style>

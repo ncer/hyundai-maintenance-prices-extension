@@ -1,26 +1,33 @@
 {
-  "name": "Hyundai Maintenance Prices Extension",
-  "description": "An extension that helps you compare prices for maintenance at all official Hyundai dealers in Russia.",
-  "version": null,
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
   "manifest_version": 2,
+  "default_locale": "ru",
+  "homepage_url": "https://github.com/ncer/hyundai-maintenance-prices-extension",
   "icons": {
-    "128": "icons/icon_128.png"
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
   },
   "browser_action": {
-    "default_title": "Hyundai Maintenance Prices Extension",
-    "default_popup": "popup/popup.html",
+    "default_title": "__MSG_extName__",
+    "default_popup": "popup.html",
     "default_icon": {
-      "128": "icons/icon_128.png"
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
     }
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
   },
   "content_scripts": [
     {
       "matches": ["*://*.hyundai.ru/*"],
-      "js": ["content/content.js"],
-      "css": ["content/content.css"]
+      "js": ["js/content.js"]
     }
   ],
   "permissions": ["storage"]
