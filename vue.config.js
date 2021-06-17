@@ -1,4 +1,8 @@
 module.exports = {
+  css: {
+    extract: false,
+  },
+
   pages: {
     popup: {
       template: 'public/browser-extension.html',
@@ -23,7 +27,7 @@ module.exports = {
 
         contentScripts: {
           entries: {
-            content: ['src/content/main.js'],
+            content: ['src/content-scripts/main.js'],
           },
         },
       },

@@ -286,7 +286,7 @@ export default {
 <style lang="scss" scoped>
 @import 'node_modules/element-ui/packages/theme-chalk/src/common/var.scss';
 
-$--font-path: 'https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/theme-chalk/fonts';
+$--font-path: 'https://cdn.jsdelivr.net/npm/element-ui@2.15.2/lib/theme-chalk/fonts';
 
 @font-face {
   font-family: 'element-icons';
